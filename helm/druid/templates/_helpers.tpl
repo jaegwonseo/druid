@@ -98,3 +98,17 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "druid.router.fullname" -}}
 {{ template "druid.fullname" . }}-{{ .Values.router.name }}
 {{- end -}}
+
+{{- define "druid.kubeVersion" -}}
+  {{- default .Capabilities.KubeVersion.Version .Values.kubeVersionOverride }}
+{{- end -}}
+
+{{- define "druid.ingress.version" -}}
+{{- if semverCompare "<1.14-0" (include "druid.kubeVersion" $) -}}
+{{- print "extensions/v1beta1" -}}
+{{- else if semverCompare "<1.19-0" (include "druid.kubeVersion" $) -}}
+{{- print "networking.k8s.io/v1beta1" -}}
+{{- else -}}
+{{- print "networking.k8s.io/v1" -}}
+{{- end -}}
+{{- end -}}
