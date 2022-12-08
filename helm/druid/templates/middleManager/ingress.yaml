@@ -20,7 +20,7 @@
 {{- if .Values.middleManager.ingress.enabled -}}
 {{- $fullName := include "druid.middleManager.fullname" . -}}
 {{- $ingressPath := .Values.middleManager.ingress.path -}}
-apiVersion: extensions/v1beta1
+apiVersion: {{ include "druid.ingress.version" . }}
 kind: Ingress
 metadata:
   name: {{ $fullName }}
@@ -50,9 +50,19 @@ spec:
     - host: {{ . | quote }}
       http:
         paths:
+        {{- if eq (include "druid.ingress.version" $) "extensions/v1beta1" }}
           - path: {{ $ingressPath }}
             backend:
               serviceName: {{ $fullName }}
               servicePort: http
+        {{- else }}
+          - path: {{ $ingressPath }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: http
+        {{- end }}
   {{- end }}
 {{- end }}
