@@ -112,3 +112,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- print "networking.k8s.io/v1" -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "druid.pdb.version" -}}
+{{- if semverCompare "<1.21" (include "druid.kubeVersion" $) -}}
+{{- print "policy/v1beta1" -}}
+{{- else -}}
+{{- print "policy/v1" -}}
+{{- end -}}
+{{- end -}}

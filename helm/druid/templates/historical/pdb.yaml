@@ -18,7 +18,7 @@
 */}}
 
 {{- if .Values.historical.podDisruptionBudget.enabled }}
-apiVersion: policy/v1beta1
+apiVersion: {{ include "druid.pdb.version" . }}
 kind: PodDisruptionBudget
 metadata:
   labels:
